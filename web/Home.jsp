@@ -5,7 +5,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Shoes Shop - Trang chủ</title>
+        <title>Music Store - Trang chủ</title>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -96,7 +96,7 @@
                 display: block;
             }
             .banner {
-                background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+                background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
                 background-size: cover;
                 background-position: center;
                 padding: 100px 0;
@@ -123,26 +123,26 @@
             </ol>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img class="d-block w-100" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Giày thể thao">
+                    <img class="d-block w-100" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Nhạc cụ">
                     <div class="carousel-caption d-none d-md-block">
-                        <h2>Giày Chất Lượng Cao</h2>
-                        <p>Khám phá bộ sưu tập giày mới nhất với chất lượng tốt nhất</p>
+                        <h2>Nhạc Cụ Chất Lượng Cao</h2>
+                        <p>Khám phá bộ sưu tập nhạc cụ mới nhất với chất lượng âm thanh tuyệt vời</p>
                         <a href="#featured-products" class="btn btn-danger px-4 py-2">Mua ngay</a>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img class="d-block w-100" src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Giày thời trang">
+                    <img class="d-block w-100" src="https://images.unsplash.com/photo-1507838153414-b4b713384a76?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Guitar">
                     <div class="carousel-caption d-none d-md-block">
-                        <h2>Phong Cách Thời Trang</h2>
-                        <p>Nâng tầm phong cách của bạn với bộ sưu tập giày độc đáo</p>
+                        <h2>Phong Cách Âm Nhạc</h2>
+                        <p>Nâng tầm đam mê âm nhạc của bạn với bộ sưu tập nhạc cụ độc đáo</p>
                         <a href="#featured-products" class="btn btn-danger px-4 py-2">Khám phá</a>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img class="d-block w-100" src="https://images.unsplash.com/photo-1520256862855-398228c41684?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Giày thể thao">
+                    <img class="d-block w-100" src="https://images.unsplash.com/photo-1514119412350-e174d90d280e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Piano">
                     <div class="carousel-caption d-none d-md-block">
                         <h2>Ưu Đãi Đặc Biệt</h2>
-                        <p>Giảm giá lên đến 50% cho các sản phẩm mới</p>
+                        <p>Giảm giá lên đến 50% cho các nhạc cụ mới</p>
                         <a href="#hot-deals" class="btn btn-danger px-4 py-2">Xem ngay</a>
                     </div>
                 </div>
@@ -250,7 +250,7 @@
             <div class="banner mb-4">
                 <div class="container">
                     <h2>ĐĂNG KÝ NHẬN THÔNG TIN</h2>
-                    <p class="lead">Nhận thông báo về các sản phẩm mới và ưu đãi đặc biệt.</p>
+                    <p class="lead">Nhận thông báo về các nhạc cụ mới và ưu đãi đặc biệt.</p>
                     <div class="row justify-content-center">
                         <div class="col-md-6">
                             <div class="input-group mb-3">
@@ -269,22 +269,22 @@
                 <h2 class="section-title">Thương hiệu nổi tiếng</h2>
                 <div class="row text-center">
                     <div class="col-md-2 col-4 mb-3">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/1200px-Logo_NIKE.svg.png" alt="Nike" class="img-fluid" style="height: 60px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Yamaha_logo.svg/1200px-Yamaha_logo.svg.png" alt="Yamaha" class="img-fluid" style="height: 60px;">
                     </div>
                     <div class="col-md-2 col-4 mb-3">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg" alt="Adidas" class="img-fluid" style="height: 60px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Fender_logo.svg/2560px-Fender_logo.svg.png" alt="Fender" class="img-fluid" style="height: 60px;">
                     </div>
                     <div class="col-md-2 col-4 mb-3">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/49/Puma_AG.svg" alt="Puma" class="img-fluid" style="height: 60px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Roland_logo.svg/2560px-Roland_logo.svg.png" alt="Roland" class="img-fluid" style="height: 60px;">
                     </div>
                     <div class="col-md-2 col-4 mb-3">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Converse_logo.svg" alt="Converse" class="img-fluid" style="height: 60px;">
+                        <img src="https://www.shareicon.net/data/2015/08/28/92573_gibson_512x512.png" alt="Gibson" class="img-fluid" style="height: 60px;">
                     </div>
                     <div class="col-md-2 col-4 mb-3">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Reebok_Logo.svg/1280px-Reebok_Logo.svg.png" alt="Reebok" class="img-fluid" style="height: 60px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Casio_logo.svg/2560px-Casio_logo.svg.png" alt="Casio" class="img-fluid" style="height: 60px;">
                     </div>
                     <div class="col-md-2 col-4 mb-3">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Asics_Logo.svg/2560px-Asics_Logo.svg.png" alt="Asics" class="img-fluid" style="height: 60px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Shure_logo.svg" alt="Shure" class="img-fluid" style="height: 60px;">
                     </div>
                 </div>
             </section>

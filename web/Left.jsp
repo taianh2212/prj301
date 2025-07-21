@@ -6,7 +6,7 @@
     <!-- Danh mục sản phẩm -->
     <div class="card bg-light mb-4">
         <div class="card-header bg-primary text-white text-uppercase">
-            <i class="fas fa-list"></i> Danh mục sản phẩm
+            <i class="fas fa-list"></i> Danh mục nhạc cụ
         </div>
         <ul class="list-group category_block">
             <c:forEach items="${listCC}" var="o">
@@ -22,7 +22,7 @@
     <!-- Sản phẩm mới nhất -->
     <div class="card bg-light mb-4">
         <div class="card-header bg-success text-white text-uppercase">
-            <i class="fas fa-fire"></i> Sản phẩm mới nhất
+            <i class="fas fa-fire"></i> Nhạc cụ mới nhất
         </div>
         <div class="card-body">
             <div class="product-top">
@@ -55,8 +55,39 @@
         </div>
         <div class="card-body">
             <p><i class="fas fa-phone-alt mr-2 text-primary"></i> +84 123 456 789</p>
-            <p><i class="fas fa-envelope mr-2 text-primary"></i> support@shoes.com</p>
+            <p><i class="fas fa-envelope mr-2 text-primary"></i> support@musicstore.com</p>
             <p class="mb-0"><i class="fas fa-clock mr-2 text-primary"></i> 8:00 AM - 10:00 PM</p>
+        </div>
+    </div>
+    
+    <!-- Tin tức âm nhạc -->
+    <div class="card bg-light mb-4">
+        <div class="card-header bg-warning text-white text-uppercase">
+            <i class="fas fa-music"></i> Tin tức âm nhạc
+        </div>
+        <div class="card-body p-2">
+            <div class="mb-2">
+                <a href="#" class="d-flex align-items-center text-dark text-decoration-none p-2">
+                    <div class="mr-2" style="width: 60px; height: 60px; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="img-fluid rounded" alt="Music News">
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">24/07/2023</small>
+                        <span class="small">Top 10 guitar acoustic tốt nhất năm 2023</span>
+                    </div>
+                </a>
+            </div>
+            <div class="mb-2">
+                <a href="#" class="d-flex align-items-center text-dark text-decoration-none p-2">
+                    <div class="mr-2" style="width: 60px; height: 60px; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="img-fluid rounded" alt="Music News">
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">20/07/2023</small>
+                        <span class="small">Hướng dẫn chọn piano điện cho người mới học</span>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </div>
