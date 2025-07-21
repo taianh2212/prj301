@@ -1,3 +1,16 @@
+-- Kiểm tra cấu trúc bảng Account
+PRINT 'Checking Account table structure...';
+SELECT COLUMN_NAME 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'Account';
+
+-- Kiểm tra và xóa bảng nếu đã tồn tại để tránh lỗi
+IF OBJECT_ID('OrderItems', 'U') IS NOT NULL
+    DROP TABLE OrderItems;
+
+IF OBJECT_ID('Orders', 'U') IS NOT NULL
+    DROP TABLE Orders;
+
 -- Create Orders table
 CREATE TABLE Orders (
     id INT IDENTITY(1,1) PRIMARY KEY,

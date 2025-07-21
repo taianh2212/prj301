@@ -5,9 +5,11 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Thanh toán thành công</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
         <style>
             .success-container {
                 max-width: 800px;
@@ -51,97 +53,46 @@
         </style>
     </head>
     <body>
-        <jsp:include page="Menu.jsp"></jsp:include>
+        <%@include file="Menu.jsp" %>
         
-        <div class="container success-container">
-            <div class="card">
-                <i class="fas fa-check-circle payment-icon"></i>
-                <h2>Thanh toán thành công! <span class="badge badge-vnpay">VNPay</span></h2>
-                <p class="lead">${message}</p>
-                
-                <div class="order-info">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Đơn hàng của bạn đã được xác nhận và sẽ được giao trong 3-5 ngày làm việc.
-                    <c:if test="${not empty orderId}">
-                        <div class="mt-2">
-                            <strong>Mã đơn hàng:</strong> #${orderId}
-                            <br>
-                            <a href="order-history?action=view&id=${orderId}" class="text-primary">
-                                <i class="fas fa-eye"></i> Xem chi tiết đơn hàng
-                            </a>
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h4 class="mb-0"><i class="fa fa-check-circle"></i> Thanh toán thành công</h4>
                         </div>
-                    </c:if>
-                    <c:if test="${not empty transactionNo}">
-                        <div class="mt-2">
-                            <strong>Mã giao dịch:</strong> ${transactionNo}
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <i class="fa fa-check-circle text-success" style="font-size: 5rem;"></i>
+                            </div>
+                            
+                            <h3 class="text-center">Cảm ơn bạn đã mua hàng!</h3>
+                            <p class="text-center">Đơn hàng của bạn đã được xác nhận.</p>
+                            
+                            <div class="payment-details mt-4">
+                                <h5>Chi tiết thanh toán:</h5>
+                                <hr>
+                                <p><strong>Mã giao dịch:</strong> ${transactionNo}</p>
+                                <p><strong>Số tiền:</strong> <fmt:formatNumber value="${amount}" type="number"/> VNĐ</p>
+                                <p><strong>Phương thức:</strong> ${bankCode} (${cardType})</p>
+                                <p><strong>Thời gian:</strong> ${payDate}</p>
+                                <p><strong>Nội dung:</strong> ${orderInfo}</p>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <a href="home" class="btn btn-primary">
+                                    <i class="fa fa-shopping-cart"></i> Tiếp tục mua sắm
+                                </a>
+                            </div>
                         </div>
-                    </c:if>
-                </div>
-                
-                <div class="transaction-details">
-                    <h4 class="mb-4"><i class="fas fa-receipt mr-2"></i>Chi tiết giao dịch</h4>
-                    <table class="table table-striped">
-                        <c:if test="${not empty transactionNo}">
-                            <tr>
-                                <th width="40%">Mã giao dịch:</th>
-                                <td>${transactionNo}</td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty amount}">
-                            <tr>
-                                <th>Số tiền:</th>
-                                <td>
-                                    <strong><fmt:formatNumber type="number" pattern="#,##0 VND" value="${amount}" /></strong>
-                                </td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty payDate}">
-                            <tr>
-                                <th>Ngày thanh toán:</th>
-                                <td>${payDate}</td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty orderInfo}">
-                            <tr>
-                                <th>Thông tin đơn hàng:</th>
-                                <td>${orderInfo}</td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${not empty bankCode}">
-                            <tr>
-                                <th>Ngân hàng:</th>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${bankCode eq 'NCB'}">
-                                            <strong>Ngân hàng Quốc Dân (NCB)</strong>
-                                        </c:when>
-                                        <c:when test="${bankCode eq 'VNBANK' || bankCode eq 'INTCARD'}">
-                                            <strong>${bankCode}</strong>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <strong>${bankCode}</strong>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                            </tr>
-                        </c:if>
-                    </table>
-                </div>
-                
-                <div class="mt-4">
-                    <a href="home" class="btn btn-primary mr-3">
-                        <i class="fas fa-home"></i> Trang chủ
-                    </a>
-                    <a href="order-history" class="btn btn-success">
-                        <i class="fas fa-list"></i> Lịch sử đơn hàng
-                    </a>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <jsp:include page="Footer.jsp"></jsp:include>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+            
+        <%@include file="Footer.jsp" %>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     </body>
 </html> 

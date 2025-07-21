@@ -89,48 +89,40 @@ public class VNPayReturnController extends HttpServlet {
                 if (vnp_ResponseCode != null) {
                     if ("00".equals(vnp_ResponseCode) && "00".equals(vnp_TransactionStatus)) {
                         // Payment success with correct code
+                        System.out.println("====== PAYMENT SUCCESSFUL - PROCESSING ORDER SAVING ======");
                         paymentSuccess = true;
                         paymentMessage = "Thanh toán thành công";
-                    } else {
-                        // Payment failed with any other response code
-                        paymentSuccess = false;
-                        paymentMessage = "Thanh toán không thành công (Mã lỗi: " + vnp_ResponseCode + ")";
-                    }
-                    
-                    // Clear cart after successful payment
-                    if (paymentSuccess) {
+                        
+                        // Get session
                         HttpSession session = request.getSession();
                         
-                        // Save order to database
+                        // Get cart and account from session
                         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
                         Account account = (Account) session.getAttribute("acc");
                         
-                        // Debug info for payment success
-                        System.out.println("------ PAYMENT SUCCESS DEBUG ------");
-                        System.out.println("Cart in session: " + (cart != null ? "Yes, items: " + cart.size() : "No"));
-                        System.out.println("Account in session: " + (account != null ? "Yes" : "No"));
-                        if (account != null) {
-                            System.out.println("Account ID: " + account.getId() + ", Username: " + account.getUser());
-                        }
+                        // Debug info
+                        System.out.println("PAYMENT SUCCESS DEBUG - Session ID: " + session.getId());
+                        System.out.println("PAYMENT SUCCESS DEBUG - Cart in session: " + (cart != null ? "Yes, items: " + cart.size() : "No"));
+                        System.out.println("PAYMENT SUCCESS DEBUG - Account in session: " + (account != null ? "Yes" : "No"));
                         
-                        if (cart != null && !cart.isEmpty() && account != null) {
-                            // Debug detailed account information
-                            System.out.println("DETAILED ACCOUNT INFO:");
+                        if (account != null) {
+                            System.out.println("ACCOUNT DETAILS:");
                             System.out.println("  ID: " + account.getId());
                             System.out.println("  Username: " + account.getUser());
                             System.out.println("  isSell: " + account.getIsSell());
                             System.out.println("  isAdmin: " + account.getIsAdmin());
                             System.out.println("  Email: " + (account.getEmail() != null ? account.getEmail() : "null"));
-                            
+                        }
+                        
+                        // Process order if we have cart and account
+                        if (cart != null && !cart.isEmpty() && account != null) {
                             // Get transaction details
                             String vnp_Amount = request.getParameter("vnp_Amount");
                             double amount = 0;
                             if (vnp_Amount != null) {
-                                // VNPay amount is in VND * 100
-                                amount = Double.parseDouble(vnp_Amount) / 100;
+                                amount = Double.parseDouble(vnp_Amount) / 100; // Convert from VND * 100
                                 System.out.println("VNPay Amount: " + vnp_Amount + " => " + amount + " VND");
                             } else {
-                                // Calculate from cart if amount not provided
                                 for (CartItem item : cart) {
                                     amount += item.getTotal();
                                 }
@@ -140,47 +132,58 @@ public class VNPayReturnController extends HttpServlet {
                             String vnp_TransactionNo = request.getParameter("vnp_TransactionNo");
                             System.out.println("Transaction Code: " + vnp_TransactionNo);
                             
-                            // Save order
-                            DAO dao = new DAO();
-                            int orderId = dao.createOrder(
-                                account.getId(), 
-                                amount, 
-                                "VNPay", 
-                                vnp_TransactionNo
-                            );
-                            
-                            System.out.println("Order created with ID: " + orderId);
-                            
-                            if (orderId > 0) {
-                                // Save order items
-                                dao.saveOrderItems(orderId, cart);
-                                System.out.println("Order items saved for order ID: " + orderId);
+                            try {
+                                // Save order
+                                DAO dao = new DAO();
+                                System.out.println("Saving order with accountId=" + account.getId() + ", amount=" + amount);
                                 
-                                // Get the saved order to verify
-                                Order savedOrder = dao.getOrderById(orderId);
-                                if (savedOrder != null) {
-                                    System.out.println("Verified saved order: ID=" + savedOrder.getId() 
-                                        + ", AccountID=" + savedOrder.getAccountId()
-                                        + ", Items=" + savedOrder.getOrderItems().size());
+                                int orderId = dao.createOrder(
+                                    account.getId(), 
+                                    amount, 
+                                    "VNPay", 
+                                    vnp_TransactionNo
+                                );
+                                
+                                System.out.println("Order created with ID: " + orderId);
+                                
+                                if (orderId > 0) {
+                                    // Save order items
+                                    dao.saveOrderItems(orderId, cart);
+                                    System.out.println("Order items saved for order ID: " + orderId);
+                                    
+                                    // Get the saved order to verify
+                                    Order savedOrder = dao.getOrderById(orderId);
+                                    if (savedOrder != null) {
+                                        System.out.println("Verified saved order: ID=" + savedOrder.getId() 
+                                            + ", AccountID=" + savedOrder.getAccountId()
+                                            + ", Items=" + savedOrder.getOrderItems().size());
+                                        
+                                        // Store order ID in request for display
+                                        request.setAttribute("orderId", orderId);
+                                        System.out.println("Order ID set as request attribute: " + orderId);
+                                    } else {
+                                        System.out.println("WARNING: Could not verify saved order with ID: " + orderId);
+                                    }
                                 } else {
-                                    System.out.println("WARNING: Could not verify saved order with ID: " + orderId);
+                                    System.out.println("ERROR: Failed to create order! Returned ID: " + orderId);
                                 }
-                                
-                                // Store order ID in request for display
-                                request.setAttribute("orderId", orderId);
-                                System.out.println("Order ID set as request attribute: " + orderId);
-                            } else {
-                                System.out.println("ERROR: Failed to create order! Returned ID: " + orderId);
+                            } catch (Exception e) {
+                                System.out.println("CRITICAL ERROR SAVING ORDER: " + e.getMessage());
+                                e.printStackTrace();
                             }
                         } else {
                             System.out.println("WARNING: Cannot save order - " 
                                 + (cart == null ? "cart is null" : cart.isEmpty() ? "cart is empty" : "") 
                                 + (account == null ? ", account is null" : ""));
                         }
-                        System.out.println("--------------------------------");
+                        System.out.println("====== ORDER PROCESSING COMPLETE ======");
                         
-                        // Clear cart
+                        // Clear cart after successful payment
                         session.removeAttribute("cart");
+                    } else {
+                        // Payment failed with any other response code
+                        paymentSuccess = false;
+                        paymentMessage = "Thanh toán không thành công (Mã lỗi: " + vnp_ResponseCode + ")";
                     }
                 } else {
                     // No response code at all
