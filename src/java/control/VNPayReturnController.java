@@ -125,6 +125,9 @@ public class VNPayReturnController extends HttpServlet {
             request.setAttribute("bankCode", vnp_BankCode);
             request.setAttribute("cardType", vnp_CardType);
 
+            // Log that we're forwarding to the payment result page
+            System.out.println("Forwarding to payment result page");
+            
             // Forward to payment result page
             request.getRequestDispatcher("PaymentResult.jsp").forward(request, response);
         } catch (Exception e) {

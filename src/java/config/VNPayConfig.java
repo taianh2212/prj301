@@ -120,11 +120,8 @@ public class VNPayConfig {
     
     // Helper method to get return URL dynamically
     public static String getReturnUrl(HttpServletRequest request) {
-        // For development we'll skip the callback and just go back to the home page
-        return "http://localhost:9999/home";
-        
-        // For demo and development, just use a simple URL
-        // return "http://localhost:9999/vnpay-return";
+        // Use vnpay-return URL to show payment result page
+        return "http://localhost:9999/vnpay-return";
         
         // Production code would use this more complex approach:
         /*

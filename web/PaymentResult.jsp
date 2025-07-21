@@ -13,8 +13,8 @@
                 margin: 30px auto;
             }
             .payment-icon {
-                font-size: 72px;
-                margin-bottom: 20px;
+                font-size: 90px;
+                margin-bottom: 25px;
             }
             .payment-success {
                 color: #28a745;
@@ -24,6 +24,7 @@
             }
             .result-message {
                 margin-bottom: 30px;
+                font-size: 18px;
             }
             .transaction-details {
                 background-color: #f8f9fa;
@@ -32,11 +33,15 @@
                 margin-bottom: 30px;
             }
             .action-buttons {
-                margin-top: 20px;
+                margin-top: 30px;
             }
             .order-summary {
-                margin-top: 15px;
+                margin-top: 25px;
                 font-size: 18px;
+                padding: 15px;
+                background-color: #e8f4fc;
+                border-radius: 5px;
+                border-left: 5px solid #007bff;
             }
             .debug-info {
                 font-family: monospace;
@@ -51,8 +56,37 @@
                 overflow: auto;
             }
             .debug-toggle {
-                margin-top: 10px;
+                margin-top: 30px;
                 text-align: center;
+            }
+            .card {
+                border: none;
+                box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+            }
+            .card-body {
+                padding: 2.5rem;
+            }
+            h2.card-title {
+                margin-bottom: 1.5rem;
+                font-weight: 600;
+            }
+            .badge-vnpay {
+                background-color: #004a9f;
+                color: white;
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 4px;
+                margin-left: 10px;
+                vertical-align: middle;
+            }
+            .bank-info {
+                display: flex;
+                align-items: center;
+                margin-top: 10px;
+            }
+            .bank-logo {
+                height: 30px;
+                margin-right: 10px;
             }
         </style>
     </head>
@@ -65,15 +99,21 @@
                     <c:choose>
                         <c:when test="${success == true}">
                             <i class="fas fa-check-circle payment-icon payment-success"></i>
-                            <h2 class="card-title">Thanh toán thành công!</h2>
+                            <h2 class="card-title">Thanh toán thành công! <span class="badge badge-vnpay">VNPay</span></h2>
                             <p class="result-message">${message}</p>
                             <div class="order-summary">
+                                <i class="fas fa-info-circle mr-2"></i>
                                 Đơn hàng của bạn đã được xác nhận và sẽ được giao trong 3-5 ngày làm việc.
+                                <c:if test="${not empty transactionNo}">
+                                    <div class="mt-2">
+                                        <strong>Mã giao dịch:</strong> ${transactionNo}
+                                    </div>
+                                </c:if>
                             </div>
                         </c:when>
                         <c:otherwise>
                             <i class="fas fa-times-circle payment-icon payment-failed"></i>
-                            <h2 class="card-title">Thanh toán thất bại</h2>
+                            <h2 class="card-title">Thanh toán thất bại <span class="badge badge-vnpay">VNPay</span></h2>
                             <p class="result-message">${message}</p>
                             <div class="alert alert-info" role="alert">
                                 <i class="fas fa-info-circle"></i> Vui lòng thử lại hoặc chọn phương thức thanh toán khác.
@@ -83,7 +123,7 @@
                     
                     <c:if test="${not empty transactionNo || not empty amount}">
                         <div class="transaction-details">
-                            <h4>Chi tiết giao dịch</h4>
+                            <h4 class="mb-4"><i class="fas fa-receipt mr-2"></i>Chi tiết giao dịch</h4>
                             <table class="table table-striped">
                                 <c:if test="${not empty transactionNo}">
                                     <tr>
@@ -96,7 +136,7 @@
                                         <th>Số tiền:</th>
                                         <td>
                                             <c:set var="formattedAmount" value="${Integer.parseInt(amount)/100}" />
-                                            ${formattedAmount} VND
+                                            <strong>${formattedAmount} VND</strong>
                                         </td>
                                     </tr>
                                 </c:if>
@@ -115,7 +155,21 @@
                                 <c:if test="${not empty bankCode}">
                                     <tr>
                                         <th>Ngân hàng:</th>
-                                        <td>${bankCode}</td>
+                                        <td>
+                                            <div class="bank-info">
+                                                <c:choose>
+                                                    <c:when test="${bankCode eq 'NCB'}">
+                                                        <strong>Ngân hàng Quốc Dân (NCB)</strong>
+                                                    </c:when>
+                                                    <c:when test="${bankCode eq 'VNBANK' || bankCode eq 'INTCARD'}">
+                                                        <strong>${bankCode}</strong>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <strong>${bankCode}</strong>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </c:if>
                             </table>
@@ -123,7 +177,7 @@
                     </c:if>
                     
                     <div class="action-buttons">
-                        <a href="home" class="btn btn-primary mr-2">
+                        <a href="home" class="btn btn-primary mr-3">
                             <i class="fas fa-home"></i> Trang chủ
                         </a>
                         <c:choose>
