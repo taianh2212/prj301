@@ -28,6 +28,9 @@ public class VNPayReturnController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         try {
+            // Log the request coming in
+            System.out.println("VNPay return callback received on port 9999");
+            
             // Extract all parameters from VNPay response
             Map<String, String> fields = new HashMap<>();
             for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
@@ -35,6 +38,7 @@ public class VNPayReturnController extends HttpServlet {
                 String fieldValue = request.getParameter(fieldName);
                 if ((fieldValue != null) && (fieldValue.length() > 0)) {
                     fields.put(fieldName, fieldValue);
+                    System.out.println("Parameter: " + fieldName + " = " + fieldValue);
                 }
             }
 

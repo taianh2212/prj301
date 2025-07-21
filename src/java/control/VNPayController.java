@@ -126,9 +126,21 @@ public class VNPayController extends HttpServlet {
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         
-        // Redirect to VNPay payment gateway
-        String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
-        response.sendRedirect(paymentUrl);
+        try {
+            // Log payment URL for debugging
+            System.out.println("Payment URL: " + VNPayConfig.vnp_PayUrl + "?" + queryUrl);
+            
+            // Redirect to VNPay payment gateway
+            String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
+            response.sendRedirect(paymentUrl);
+        } catch (Exception e) {
+            // If there's an issue redirecting to VNPay, redirect back to cart
+            // and add an error message
+            System.out.println("Payment error: " + e.getMessage());
+            request.getSession().setAttribute("paymentError", 
+                "Không thể kết nối đến cổng thanh toán. Vui lòng thử lại sau. Lỗi: " + e.getMessage());
+            response.sendRedirect("cart");
+        }
     }
 
     @Override

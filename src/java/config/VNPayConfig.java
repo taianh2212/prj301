@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/vnpay-return";
+    public static String vnp_ReturnUrl = "http://localhost:9999/vnpay-return";
     public static String vnp_TmnCode = "O8D9R4UU"; // Replace with your actual merchant code from VNPay
     public static String vnp_HashSecret = "IHAWFNX34HJ4L75U3O001BZDHWDVQ2MZ"; // Replace with your actual secret key from VNPay
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
@@ -120,8 +120,11 @@ public class VNPayConfig {
     
     // Helper method to get return URL dynamically
     public static String getReturnUrl(HttpServletRequest request) {
+        // For development we'll skip the callback and just go back to the home page
+        return "http://localhost:9999/home";
+        
         // For demo and development, just use a simple URL
-        return "http://localhost:8080/vnpay-return";
+        // return "http://localhost:9999/vnpay-return";
         
         // Production code would use this more complex approach:
         /*
