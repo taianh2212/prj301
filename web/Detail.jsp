@@ -89,7 +89,7 @@
                                                 <dl class="param param-inline">
                                                     <dt>Quantity: </dt>
                                                     <dd>
-                                                        <select class="form-control form-control-sm" style="width:70px;">
+                                                        <select id="quantity" class="form-control form-control-sm" style="width:70px;">
                                                             <option> 1 </option>
                                                             <option> 2 </option>
                                                             <option> 3 </option>
@@ -101,7 +101,7 @@
                                         </div> <!-- row.// -->
                                         <hr>
                                         <a href="#" class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
-                                        <a href="#" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fas fa-shopping-cart"></i> Add to cart </a>
+                                        <a href="cart?action=add&pid=${detail.id}" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fas fa-shopping-cart"></i> Add to cart </a>
                                     </article> <!-- card-body.// -->
                                 </aside> <!-- col.// -->
                             </div> <!-- row.// -->
@@ -113,5 +113,12 @@
             </div>
         </div>
        <jsp:include page="Footer.jsp"></jsp:include>
+       <script>
+           document.querySelector('.btn-outline-primary').addEventListener('click', function(e) {
+               e.preventDefault();
+               var quantity = document.getElementById('quantity').value;
+               window.location.href = 'cart?action=add&pid=${detail.id}&quantity=' + quantity;
+           });
+       </script>
     </body>
 </html>

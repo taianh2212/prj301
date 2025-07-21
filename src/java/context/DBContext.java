@@ -14,7 +14,7 @@ public class DBContext {
     public static String driverName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
     // URL kết nối đến database Wish
-    public static String dbURL = "jdbc:sqlserver://localhost:1433;databaseName=banhang";
+    public static String dbURL = "jdbc:sqlserver://localhost:1433;databaseName=Wish";
 
     // Thông tin đăng nhập SQL Server
     public static String userDB = "sa";

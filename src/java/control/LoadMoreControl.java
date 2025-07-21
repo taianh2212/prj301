@@ -55,7 +55,7 @@ public class LoadMoreControl extends HttpServlet {
                     + "                                                <p class=\"btn btn-danger btn-block\">"+o.getPrice()+" $</p>\n"
                     + "                                            </div>\n"
                     + "                                            <div class=\"col\">\n"
-                    + "                                                <a href=\"#\" class=\"btn btn-success btn-block\">Add to cart</a>\n"
+                    + "                                                <a href=\"cart?action=add&pid="+o.getId()+"\" class=\"btn btn-success btn-block\">Add to cart</a>\n"
                     + "                                            </div>\n"
                     + "                                        </div>\n"
                     + "                                    </div>\n"
