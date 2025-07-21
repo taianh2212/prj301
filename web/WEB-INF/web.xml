@@ -10,14 +10,42 @@
         <url-pattern>/users</url-pattern>
     </servlet-mapping>
     
-    <!-- VNPay Return Controller Configuration -->
+    <!-- VNPay Controller Configuration -->
     <servlet>
-        <servlet-name>VNPayReturnController</servlet-name>
-        <servlet-class>control.VNPayReturnController</servlet-class>
+        <servlet-name>VNPayController</servlet-name>
+        <servlet-class>control.VNPayController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>VNPayReturnController</servlet-name>
-        <url-pattern>/vnpay-return</url-pattern>
+        <servlet-name>VNPayController</servlet-name>
+        <url-pattern>/vnpay</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VNPayController</servlet-name>
+        <url-pattern>/vnpay-process</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Payment Result Controller Configuration -->
+    <servlet>
+        <servlet-name>PaymentResultControl</servlet-name>
+        <servlet-class>control.PaymentResultControl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PaymentResultControl</servlet-name>
+        <url-pattern>/payment-success</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PaymentResultControl</servlet-name>
+        <url-pattern>/payment-failed</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Cart Controller Configuration -->
+    <servlet>
+        <servlet-name>CartControl</servlet-name>
+        <servlet-class>control.CartControl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CartControl</servlet-name>
+        <url-pattern>/cart</url-pattern>
     </servlet-mapping>
     
     <welcome-file-list>

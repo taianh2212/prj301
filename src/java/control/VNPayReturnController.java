@@ -29,7 +29,7 @@ public class VNPayReturnController extends HttpServlet {
 
         try {
             // Log the request coming in
-            System.out.println("VNPay return callback received on port 9999");
+            System.out.println("VNPay return callback received");
             
             // Extract all parameters from VNPay response
             Map<String, String> fields = new HashMap<>();
@@ -89,14 +89,16 @@ public class VNPayReturnController extends HttpServlet {
                         paymentSuccess = true;
                         paymentMessage = "Thanh toán thành công";
                     } else {
-                        // For demo purposes, accept other response codes as success too
-                        paymentSuccess = true;
-                        paymentMessage = "Thanh toán thành công (Demo mode - Response code: " + vnp_ResponseCode + ")";
+                        // Payment failed with any other response code
+                        paymentSuccess = false;
+                        paymentMessage = "Thanh toán không thành công (Mã lỗi: " + vnp_ResponseCode + ")";
                     }
                     
                     // Clear cart after successful payment
-                    HttpSession session = request.getSession();
-                    session.removeAttribute("cart");
+                    if (paymentSuccess) {
+                        HttpSession session = request.getSession();
+                        session.removeAttribute("cart");
+                    }
                 } else {
                     // No response code at all
                     paymentSuccess = false;
@@ -104,6 +106,7 @@ public class VNPayReturnController extends HttpServlet {
                 }
             } else {
                 // Invalid signature
+                paymentSuccess = false;
                 paymentMessage = "Có lỗi xảy ra trong quá trình xử lý. Lỗi xác thực chữ ký.";
             }
 
@@ -125,16 +128,19 @@ public class VNPayReturnController extends HttpServlet {
             request.setAttribute("bankCode", vnp_BankCode);
             request.setAttribute("cardType", vnp_CardType);
 
-            // Log that we're forwarding to the payment result page
-            System.out.println("Forwarding to payment result page");
-            
-            // Forward to payment result page
-            request.getRequestDispatcher("PaymentResult.jsp").forward(request, response);
+            // Forward to appropriate page based on payment result
+            if (paymentSuccess) {
+                System.out.println("Forwarding to payment success page");
+                request.getRequestDispatcher("PaymentSuccess.jsp").forward(request, response);
+            } else {
+                System.out.println("Forwarding to payment failed page");
+                request.getRequestDispatcher("PaymentFailed.jsp").forward(request, response);
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing VNPay callback", e);
             request.setAttribute("success", false);
             request.setAttribute("message", "Đã xảy ra lỗi hệ thống: " + e.getMessage());
-            request.getRequestDispatcher("PaymentResult.jsp").forward(request, response);
+            request.getRequestDispatcher("PaymentFailed.jsp").forward(request, response);
         }
     }
 
