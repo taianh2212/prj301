@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/prj301/vnpay-return";
+    public static String vnp_ReturnUrl = "http://localhost:8080/vnpay-return";
     public static String vnp_TmnCode = "O8D9R4UU"; // Replace with your actual merchant code from VNPay
     public static String vnp_HashSecret = "IHAWFNX34HJ4L75U3O001BZDHWDVQ2MZ"; // Replace with your actual secret key from VNPay
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
@@ -116,5 +116,31 @@ public class VNPayConfig {
             sb.append(chars.charAt(rnd.nextInt(chars.length())));
         }
         return sb.toString();
+    }
+    
+    // Helper method to get return URL dynamically
+    public static String getReturnUrl(HttpServletRequest request) {
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+        String contextPath = request.getContextPath();
+        
+        // Build the base URL
+        StringBuilder url = new StringBuilder();
+        url.append(request.getScheme()).append("://");
+        url.append(serverName);
+        
+        // Add port if not default
+        if (serverPort != 80 && serverPort != 443) {
+            url.append(":").append(serverPort);
+        }
+        
+        // Add context path and specific endpoint
+        url.append(contextPath);
+        if (!contextPath.endsWith("/")) {
+            url.append("/");
+        }
+        url.append("vnpay-return");
+        
+        return url.toString();
     }
 } 

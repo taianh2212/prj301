@@ -4,71 +4,118 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Payment Result</title>
+        <title>Kết quả thanh toán</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <style>
+            .result-container {
+                max-width: 800px;
+                margin: 30px auto;
+            }
+            .payment-icon {
+                font-size: 72px;
+                margin-bottom: 20px;
+            }
+            .payment-success {
+                color: #28a745;
+            }
+            .payment-failed {
+                color: #dc3545;
+            }
+            .result-message {
+                margin-bottom: 30px;
+            }
+            .transaction-details {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 5px;
+                margin-bottom: 30px;
+            }
+            .action-buttons {
+                margin-top: 20px;
+            }
+            .order-summary {
+                margin-top: 15px;
+                font-size: 18px;
+            }
+        </style>
     </head>
     <body>
         <jsp:include page="Menu.jsp"></jsp:include>
         
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-8 offset-md-2">
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
-                            <h3 class="text-center">Payment Result</h3>
-                        </div>
-                        <div class="card-body">
-                            <c:choose>
-                                <c:when test="${success == true}">
-                                    <div class="alert alert-success text-center">
-                                        <i class="fa fa-check-circle fa-4x mb-3"></i>
-                                        <h3>Payment Successful!</h3>
-                                        <p>${message}</p>
-                                    </div>
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="alert alert-danger text-center">
-                                        <i class="fa fa-times-circle fa-4x mb-3"></i>
-                                        <h3>Payment Failed!</h3>
-                                        <p>${message}</p>
-                                    </div>
-                                </c:otherwise>
-                            </c:choose>
-                            
-                            <div class="transaction-details mt-4">
-                                <h4>Transaction Details</h4>
-                                <table class="table table-bordered">
+        <div class="container result-container">
+            <div class="card">
+                <div class="card-body text-center">
+                    <c:choose>
+                        <c:when test="${success == true}">
+                            <i class="fas fa-check-circle payment-icon payment-success"></i>
+                            <h2 class="card-title">Thanh toán thành công!</h2>
+                            <p class="result-message">${message}</p>
+                            <div class="order-summary">
+                                Đơn hàng của bạn đã được xác nhận và sẽ được giao trong 3-5 ngày làm việc.
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <i class="fas fa-times-circle payment-icon payment-failed"></i>
+                            <h2 class="card-title">Thanh toán thất bại</h2>
+                            <p class="result-message">${message}</p>
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle"></i> Vui lòng thử lại hoặc chọn phương thức thanh toán khác.
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                    
+                    <c:if test="${not empty transactionNo}">
+                        <div class="transaction-details">
+                            <h4>Chi tiết giao dịch</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Mã giao dịch:</th>
+                                    <td>${transactionNo}</td>
+                                </tr>
+                                <tr>
+                                    <th>Số tiền:</th>
+                                    <td>
+                                        <c:if test="${not empty amount}">
+                                            <c:set var="formattedAmount" value="${Integer.parseInt(amount)/100}" />
+                                            <fmt:formatNumber type="number" pattern="#,###" value="${formattedAmount}" /> VND
+                                        </c:if>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Ngày thanh toán:</th>
+                                    <td>${payDate}</td>
+                                </tr>
+                                <tr>
+                                    <th>Thông tin đơn hàng:</th>
+                                    <td>${orderInfo}</td>
+                                </tr>
+                                <c:if test="${not empty bankCode}">
                                     <tr>
-                                        <th>Order Info:</th>
-                                        <td>${orderInfo}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Amount:</th>
-                                        <td>${Integer.parseInt(amount)/100} VND</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Payment Date:</th>
-                                        <td>${payDate}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Transaction No:</th>
-                                        <td>${transactionNo}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Bank Code:</th>
+                                        <th>Ngân hàng:</th>
                                         <td>${bankCode}</td>
                                     </tr>
-                                    <tr>
-                                        <th>Card Type:</th>
-                                        <td>${cardType}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            
-                            <div class="text-center mt-4">
-                                <a href="home" class="btn btn-primary">Continue Shopping</a>
-                            </div>
+                                </c:if>
+                            </table>
                         </div>
+                    </c:if>
+                    
+                    <div class="action-buttons">
+                        <a href="home" class="btn btn-primary mr-2">
+                            <i class="fas fa-home"></i> Trang chủ
+                        </a>
+                        <c:choose>
+                            <c:when test="${success == true}">
+                                <a href="user" class="btn btn-success">
+                                    <i class="fas fa-list"></i> Xem đơn hàng
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="cart" class="btn btn-danger">
+                                    <i class="fas fa-shopping-cart"></i> Quay lại giỏ hàng
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
             </div>

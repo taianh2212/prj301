@@ -88,7 +88,10 @@ public class VNPayController extends HttpServlet {
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", vnp_OrderInfo);
-        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
+        
+        // Use dynamic return URL
+        String returnUrl = VNPayConfig.getReturnUrl(request);
+        vnp_Params.put("vnp_ReturnUrl", returnUrl);
         
         // Build query string
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
