@@ -107,7 +107,25 @@
                                         <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tổng thanh toán</strong>
                                             <h5 class="font-weight-bold"><fmt:formatNumber type="number" maxFractionDigits="2" value="${totalAmount * 1.1}"/> $</h5>
                                         </li>
-                                    </ul><a href="#" class="btn btn-dark rounded-pill py-2 btn-block">Mua hàng</a>
+                                    </ul>
+                                    
+                                    <!-- Payment options -->
+                                    <div class="payment-options">
+                                        <h5 class="mb-3">Phương thức thanh toán</h5>
+                                        
+                                        <!-- Cash on delivery -->
+                                        <a href="#" class="btn btn-dark rounded-pill py-2 btn-block mb-2">Thanh toán khi nhận hàng</a>
+                                        
+                                        <!-- VNPay payment -->
+                                        <form action="vnpay" method="post">
+                                            <input type="hidden" name="vnp_OrderInfo" value="Thanh toan don hang">
+                                            <input type="hidden" name="ordertype" value="billpayment">
+                                            <button type="submit" class="btn btn-primary rounded-pill py-2 btn-block">
+                                                <img src="https://sandbox.vnpayment.vn/paymentv2/images/icons/logo_vnpay.svg" alt="VNPay" height="24" class="mr-2">
+                                                Thanh toán qua VNPay
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
