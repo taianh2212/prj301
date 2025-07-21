@@ -15,6 +15,8 @@ public class Account {
     private String pass;
     private int isSell;
     private int isAdmin;
+    private String email;
+    private String name;
 
     public Account() {
     }
@@ -26,8 +28,25 @@ public class Account {
         this.isSell = isSell;
         this.isAdmin = isAdmin;
     }
-
-   
+    
+    public Account(int id, String user, String pass, int isSell, int isAdmin, String email) {
+        this.id = id;
+        this.user = user;
+        this.pass = pass;
+        this.isSell = isSell;
+        this.isAdmin = isAdmin;
+        this.email = email;
+    }
+    
+    public Account(int id, String user, String pass, int isSell, int isAdmin, String email, String name) {
+        this.id = id;
+        this.user = user;
+        this.pass = pass;
+        this.isSell = isSell;
+        this.isAdmin = isAdmin;
+        this.email = email;
+        this.name = name;
+    }
 
     public int getId() {
         return id;
@@ -68,13 +87,25 @@ public class Account {
     public void setIsAdmin(int isAdmin) {
         this.isAdmin = isAdmin;
     }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public String toString() {
-        return "Account{" + "id=" + id + ", user=" + user + ", pass=" + pass + ", isSell=" + isSell + ", isAdmin=" + isAdmin + '}';
+        return "Account{" + "id=" + id + ", user=" + user + ", pass=" + pass + ", isSell=" + isSell + ", isAdmin=" + isAdmin + ", email=" + email + ", name=" + name + '}';
     }
-
-   
-
-    
 }

@@ -14,11 +14,46 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
         <link href="css/login.css" rel="stylesheet" type="text/css"/>
         <title>Login Form</title>
+        <style>
+            .social-login {
+                width: 100%;
+                margin: 15px auto;
+                position: relative;
+            }
+            .social-btn {
+                margin-bottom: 10px;
+                font-weight: 500;
+                font-size: 16px;
+            }
+            .btn-google {
+                color: #fff;
+                background-color: #dd4b39;
+            }
+            .btn-google:hover {
+                color: #fff;
+                background-color: #e15f4f;
+            }
+            .btn-google img {
+                height: 20px;
+                margin-right: 10px;
+            }
+            .error-message {
+                color: #dc3545;
+                margin: 10px 0;
+                font-size: 14px;
+                text-align: center;
+            }
+        </style>
     </head>
     <body>
         <div id="logreg-forms">
             <form class="form-signin" action="login" method="post">
                 <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
+                <c:if test="${not empty error}">
+                    <div class="error-message">
+                        <p>${error}</p>
+                    </div>
+                </c:if>
                 <p class="text-danger">${mess}</p>
                 <input name="user"  type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
                 <input name="pass"  type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
@@ -29,6 +64,13 @@
                 </div>
 
                 <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+                
+                <div class="social-login">
+                    <a href="login-google" class="btn btn-block btn-google social-btn">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google"> Sign in with Google
+                    </a>
+                </div>
+                
                 <hr>
                 <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
             </form>

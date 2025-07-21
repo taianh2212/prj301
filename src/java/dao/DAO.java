@@ -411,6 +411,67 @@ public class DAO {
         }
     }
 
+    public Account checkGoogleAccountExist(String email) {
+        String query = "select * from Account\n"
+                + "where [email] = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getInt(5),
+                        rs.getString(6));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Account insertGoogleAccount(String email, String name) {
+        String query = "INSERT INTO Account (username, [password], isSell, isAdmin, [email], [name]) "
+                + "VALUES (?, ?, 0, 0, ?, ?)";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            
+            // Use email as username if needed
+            ps.setString(1, email);
+            
+            // Generate a random password (won't be used for login since Google OAuth is used)
+            String randomPass = generateRandomPassword();
+            ps.setString(2, randomPass);
+            
+            // Set email and name from Google account
+            ps.setString(3, email);
+            ps.setString(4, name);
+            
+            ps.executeUpdate();
+            
+            // Return the newly created account
+            return checkGoogleAccountExist(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private String generateRandomPassword() {
+        // Generate a random password with 10 characters
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            int index = (int) (Math.random() * chars.length());
+            sb.append(chars.charAt(index));
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         DAO dao = new DAO();
         List<Product> list = dao.getAllProduct();
