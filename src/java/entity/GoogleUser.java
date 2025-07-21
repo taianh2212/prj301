@@ -12,14 +12,10 @@ public class GoogleUser {
     public GoogleUser() {
     }
     
-    public GoogleUser(String id, String email, String name, String givenName, String familyName, String pictureUrl, String locale) {
+    public GoogleUser(String id, String email, String name) {
         this.id = id;
         this.email = email;
         this.name = name;
-        this.givenName = givenName;
-        this.familyName = familyName;
-        this.pictureUrl = pictureUrl;
-        this.locale = locale;
     }
 
     public String getId() {
@@ -76,10 +72,5 @@ public class GoogleUser {
 
     public void setLocale(String locale) {
         this.locale = locale;
-    }
-    
-    @Override
-    public String toString() {
-        return "GoogleUser{" + "id=" + id + ", email=" + email + ", name=" + name + ", givenName=" + givenName + ", familyName=" + familyName + ", pictureUrl=" + pictureUrl + ", locale=" + locale + '}';
     }
 } 

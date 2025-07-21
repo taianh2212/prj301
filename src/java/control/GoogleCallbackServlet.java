@@ -7,17 +7,15 @@ import entity.GoogleUser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import java.net.URLEncoder;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class GoogleCallbackServlet extends HttpServlet {
 
@@ -91,36 +89,49 @@ public class GoogleCallbackServlet extends HttpServlet {
     
     private String getAccessToken(String authCode) {
         try {
-            String tokenUrl = Constants.GOOGLE_TOKEN_URI;
-            URL url = new URL(tokenUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setDoOutput(true);
-            
+            // Set up connection to token URL
+            URL url = new URL(Constants.GOOGLE_TOKEN_URI);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setDoOutput(true);
+
+            // Build POST data
             String postData = "code=" + authCode
                     + "&client_id=" + Constants.GOOGLE_CLIENT_ID
                     + "&client_secret=" + Constants.GOOGLE_CLIENT_SECRET
                     + "&redirect_uri=" + Constants.GOOGLE_REDIRECT_URI
                     + "&grant_type=authorization_code";
             
-            conn.getOutputStream().write(postData.getBytes("UTF-8"));
+            // Send data
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(postData.getBytes());
+            outputStream.flush();
+            outputStream.close();
             
-            int responseCode = conn.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+            // Check response code
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                return null;
+            }
+
+            // Read response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder responseBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                responseBuilder.append(line);
+            }
+            reader.close();
+            String responseBody = responseBuilder.toString();
+            
+            // Extract access token using simple string manipulation
+            if (responseBody.contains("\"access_token\":")) {
+                int start = responseBody.indexOf("\"access_token\":\"") + 16;
+                int end = responseBody.indexOf("\"", start);
+                if (end > start) {
+                    return responseBody.substring(start, end);
                 }
-                in.close();
-                
-                // Parse JSON response to get access token
-                JSONParser parser = new JSONParser();
-                JSONObject jsonObject = (JSONObject) parser.parse(response.toString());
-                String accessToken = (String) jsonObject.get("access_token");
-                return accessToken;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,41 +141,77 @@ public class GoogleCallbackServlet extends HttpServlet {
 
     private GoogleUser getUserInfo(String accessToken) {
         try {
-            String userInfoUrl = Constants.GOOGLE_USER_INFO_URI + "?access_token=" + accessToken;
+            // Set up connection to user info URL
+            URL url = new URL(Constants.GOOGLE_USER_INFO_URI + "?access_token=" + accessToken);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
             
-            URL url = new URL(userInfoUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            
-            int responseCode = conn.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String inputLine;
-                StringBuffer content = new StringBuffer();
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
-                }
-                in.close();
-                
-                // Parse JSON response
-                JSONParser parser = new JSONParser();
-                JSONObject jsonObject = (JSONObject) parser.parse(content.toString());
-                
-                GoogleUser user = new GoogleUser();
-                user.setId((String) jsonObject.get("id"));
-                user.setEmail((String) jsonObject.get("email"));
-                user.setName((String) jsonObject.get("name"));
-                user.setGivenName((String) jsonObject.get("given_name"));
-                user.setFamilyName((String) jsonObject.get("family_name"));
-                user.setPictureUrl((String) jsonObject.get("picture"));
-                user.setLocale((String) jsonObject.get("locale"));
-                
-                return user;
+            // Check response code
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                return null;
             }
+            
+            // Read response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder responseBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                responseBuilder.append(line);
+            }
+            reader.close();
+            String responseBody = responseBuilder.toString();
+            
+            // Create user object
+            GoogleUser user = new GoogleUser();
+            
+            // Extract user data using simple string manipulation
+            user.setId(extractJsonValue(responseBody, "id"));
+            user.setEmail(extractJsonValue(responseBody, "email"));
+            user.setName(extractJsonValue(responseBody, "name"));
+            user.setGivenName(extractJsonValue(responseBody, "given_name"));
+            user.setFamilyName(extractJsonValue(responseBody, "family_name"));
+            user.setPictureUrl(extractJsonValue(responseBody, "picture"));
+            user.setLocale(extractJsonValue(responseBody, "locale"));
+            
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    private String extractJsonValue(String json, String key) {
+        try {
+            String searchKey = "\"" + key + "\":\"";
+            int start = json.indexOf(searchKey);
+            if (start < 0) {
+                searchKey = "\"" + key + "\":";
+                start = json.indexOf(searchKey);
+                if (start < 0) {
+                    return "";
+                }
+                start += searchKey.length();
+                // Handle numeric values
+                int end = json.indexOf(",", start);
+                if (end < 0) {
+                    end = json.indexOf("}", start);
+                }
+                if (end < 0) {
+                    return "";
+                }
+                return json.substring(start, end).trim();
+            }
+            
+            start += searchKey.length();
+            int end = json.indexOf("\"", start);
+            if (end < 0) {
+                return "";
+            }
+            return json.substring(start, end);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     @Override

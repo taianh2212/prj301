@@ -14,9 +14,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import entity.CartItem;
+import entity.Account;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import dao.DAO;
 
 @WebServlet(name = "VNPayReturnController", urlPatterns = {"/vnpay-return"})
 public class VNPayReturnController extends HttpServlet {
@@ -97,6 +99,46 @@ public class VNPayReturnController extends HttpServlet {
                     // Clear cart after successful payment
                     if (paymentSuccess) {
                         HttpSession session = request.getSession();
+                        
+                        // Save order to database
+                        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+                        Account account = (Account) session.getAttribute("acc");
+                        
+                        if (cart != null && !cart.isEmpty() && account != null) {
+                            // Get transaction details
+                            String vnp_Amount = request.getParameter("vnp_Amount");
+                            double amount = 0;
+                            if (vnp_Amount != null) {
+                                // VNPay amount is in VND * 100
+                                amount = Double.parseDouble(vnp_Amount) / 100;
+                            } else {
+                                // Calculate from cart if amount not provided
+                                for (CartItem item : cart) {
+                                    amount += item.getTotal();
+                                }
+                            }
+                            
+                            String vnp_TransactionNo = request.getParameter("vnp_TransactionNo");
+                            
+                            // Save order
+                            DAO dao = new DAO();
+                            int orderId = dao.createOrder(
+                                account.getId(), 
+                                amount, 
+                                "VNPay", 
+                                vnp_TransactionNo
+                            );
+                            
+                            if (orderId > 0) {
+                                // Save order items
+                                dao.saveOrderItems(orderId, cart);
+                                
+                                // Store order ID in request for display
+                                request.setAttribute("orderId", orderId);
+                            }
+                        }
+                        
+                        // Clear cart
                         session.removeAttribute("cart");
                     }
                 } else {
@@ -121,7 +163,7 @@ public class VNPayReturnController extends HttpServlet {
             // Set response attributes
             request.setAttribute("success", paymentSuccess);
             request.setAttribute("message", paymentMessage);
-            request.setAttribute("amount", vnp_Amount);
+            request.setAttribute("amount", vnp_Amount != null ? Double.parseDouble(vnp_Amount) / 100 : 0);
             request.setAttribute("orderInfo", vnp_OrderInfo);
             request.setAttribute("payDate", vnp_PayDate);
             request.setAttribute("transactionNo", vnp_TransactionNo);

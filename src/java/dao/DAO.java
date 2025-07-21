@@ -14,6 +14,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import entity.CartItem;
+import entity.Order;
+import entity.OrderItem;
 
 /**
  *
@@ -470,6 +473,150 @@ public class DAO {
             sb.append(chars.charAt(index));
         }
         return sb.toString();
+    }
+    
+    // Order-related methods
+    
+    public int createOrder(int accountId, double totalAmount, String paymentMethod, 
+                          String transactionCode) {
+        int orderId = -1;
+        String orderCode = generateOrderCode();
+        String query = "INSERT INTO Orders (account_id, order_code, total_amount, order_date, " +
+                      "payment_method, transaction_code, status) " +
+                      "VALUES (?, ?, ?, GETDATE(), ?, ?, 'Completed'); " +
+                      "SELECT SCOPE_IDENTITY() AS order_id;";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, accountId);
+            ps.setString(2, orderCode);
+            ps.setDouble(3, totalAmount);
+            ps.setString(4, paymentMethod);
+            ps.setString(5, transactionCode);
+            
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                orderId = rs.getInt("order_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orderId;
+    }
+    
+    public void saveOrderItems(int orderId, List<CartItem> cartItems) {
+        String query = "INSERT INTO OrderItems (order_id, product_id, product_name, price, quantity) " +
+                      "VALUES (?, ?, ?, ?, ?)";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            
+            for (CartItem item : cartItems) {
+                ps.setInt(1, orderId);
+                ps.setInt(2, item.getProduct().getId());
+                ps.setString(3, item.getProduct().getName());
+                ps.setDouble(4, item.getProduct().getPrice());
+                ps.setInt(5, item.getQuantity());
+                ps.addBatch();
+            }
+            
+            ps.executeBatch();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public List<Order> getOrdersByAccountId(int accountId) {
+        List<Order> orders = new ArrayList<>();
+        String query = "SELECT * FROM Orders WHERE account_id = ? ORDER BY order_date DESC";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, accountId);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Order order = new Order(
+                    rs.getInt("id"),
+                    rs.getInt("account_id"),
+                    rs.getString("order_code"),
+                    rs.getDouble("total_amount"),
+                    rs.getTimestamp("order_date"),
+                    rs.getString("payment_method"),
+                    rs.getString("transaction_code"),
+                    rs.getString("status")
+                );
+                
+                // Load order items
+                order.setOrderItems(getOrderItemsByOrderId(order.getId()));
+                orders.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+    
+    public List<OrderItem> getOrderItemsByOrderId(int orderId) {
+        List<OrderItem> items = new ArrayList<>();
+        String query = "SELECT * FROM OrderItems WHERE order_id = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, orderId);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                OrderItem item = new OrderItem(
+                    rs.getInt("id"),
+                    rs.getInt("order_id"),
+                    rs.getInt("product_id"),
+                    rs.getString("product_name"),
+                    rs.getDouble("price"),
+                    rs.getInt("quantity")
+                );
+                items.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+    
+    public Order getOrderById(int orderId) {
+        Order order = null;
+        String query = "SELECT * FROM Orders WHERE id = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, orderId);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                order = new Order(
+                    rs.getInt("id"),
+                    rs.getInt("account_id"),
+                    rs.getString("order_code"),
+                    rs.getDouble("total_amount"),
+                    rs.getTimestamp("order_date"),
+                    rs.getString("payment_method"),
+                    rs.getString("transaction_code"),
+                    rs.getString("status")
+                );
+                
+                // Load order items
+                order.setOrderItems(getOrderItemsByOrderId(order.getId()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return order;
+    }
+    
+    private String generateOrderCode() {
+        long timestamp = System.currentTimeMillis();
+        int randomNum = (int) (Math.random() * 1000);
+        return "ORD-" + timestamp + "-" + randomNum;
     }
 
     public static void main(String[] args) {

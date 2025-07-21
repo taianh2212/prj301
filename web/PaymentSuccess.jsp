@@ -62,6 +62,15 @@
                 <div class="order-info">
                     <i class="fas fa-info-circle mr-2"></i>
                     Đơn hàng của bạn đã được xác nhận và sẽ được giao trong 3-5 ngày làm việc.
+                    <c:if test="${not empty orderId}">
+                        <div class="mt-2">
+                            <strong>Mã đơn hàng:</strong> #${orderId}
+                            <br>
+                            <a href="order-history?action=view&id=${orderId}" class="text-primary">
+                                <i class="fas fa-eye"></i> Xem chi tiết đơn hàng
+                            </a>
+                        </div>
+                    </c:if>
                     <c:if test="${not empty transactionNo}">
                         <div class="mt-2">
                             <strong>Mã giao dịch:</strong> ${transactionNo}
@@ -82,8 +91,7 @@
                             <tr>
                                 <th>Số tiền:</th>
                                 <td>
-                                    <c:set var="formattedAmount" value="${Integer.parseInt(amount)/100}" />
-                                    <strong><fmt:formatNumber type="number" pattern="#,##0 VND" value="${formattedAmount}" /></strong>
+                                    <strong><fmt:formatNumber type="number" pattern="#,##0 VND" value="${amount}" /></strong>
                                 </td>
                             </tr>
                         </c:if>
@@ -124,8 +132,8 @@
                     <a href="home" class="btn btn-primary mr-3">
                         <i class="fas fa-home"></i> Trang chủ
                     </a>
-                    <a href="user" class="btn btn-success">
-                        <i class="fas fa-list"></i> Xem đơn hàng
+                    <a href="order-history" class="btn btn-success">
+                        <i class="fas fa-list"></i> Lịch sử đơn hàng
                     </a>
                 </div>
             </div>

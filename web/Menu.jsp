@@ -37,6 +37,9 @@
                         <a class="nav-link" href="#">Hello ${sessionScope.acc.user}</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="order-history"><i class="fa fa-history"></i> Lịch sử đơn hàng</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="logout">Logout</a>
                     </li> 
                 </c:if>
