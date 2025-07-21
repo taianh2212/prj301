@@ -114,6 +114,14 @@ public class VNPayReturnController extends HttpServlet {
                         }
                         
                         if (cart != null && !cart.isEmpty() && account != null) {
+                            // Debug detailed account information
+                            System.out.println("DETAILED ACCOUNT INFO:");
+                            System.out.println("  ID: " + account.getId());
+                            System.out.println("  Username: " + account.getUser());
+                            System.out.println("  isSell: " + account.getIsSell());
+                            System.out.println("  isAdmin: " + account.getIsAdmin());
+                            System.out.println("  Email: " + (account.getEmail() != null ? account.getEmail() : "null"));
+                            
                             // Get transaction details
                             String vnp_Amount = request.getParameter("vnp_Amount");
                             double amount = 0;

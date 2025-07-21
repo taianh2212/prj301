@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="dao.DAO, entity.Order, java.util.List, java.sql.Connection, java.sql.PreparedStatement, java.sql.ResultSet, context.DBContext" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,6 +35,13 @@
             color: #721c24;
             font-weight: bold;
         }
+        .db-check-section {
+            background-color: #d1ecf1;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 1px solid #bee5eb;
+        }
     </style>
 </head>
 <body>
@@ -42,7 +50,7 @@
     <div class="container mt-4">
         <h2>Lịch sử mua hàng</h2>
         
-        <!-- Debug Section -->
+        <!-- Debug Information Section -->
         <div class="debug-section">
             <h4 class="debug-title">Debug Information</h4>
             <p><strong>Account in session:</strong> ${sessionScope.acc != null ? 'Yes' : 'No'}</p>
@@ -58,6 +66,68 @@
             </c:if>
         </div>
         
+        <!-- Direct Database Check Section -->
+        <div class="db-check-section">
+            <h4>Direct Database Check</h4>
+            <p>This checks the Orders table directly:</p>
+            
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Account ID</th>
+                        <th>Order Code</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%
+                        Connection conn = null;
+                        PreparedStatement ps = null;
+                        ResultSet rs = null;
+                        int rowCount = 0;
+                        
+                        try {
+                            conn = new DBContext().getConnection();
+                            String sql = "SELECT TOP 10 * FROM Orders ORDER BY order_date DESC";
+                            ps = conn.prepareStatement(sql);
+                            rs = ps.executeQuery();
+                            
+                            while (rs.next()) {
+                                rowCount++;
+                    %>
+                    <tr>
+                        <td><%= rs.getInt("id") %></td>
+                        <td><%= rs.getInt("account_id") %></td>
+                        <td><%= rs.getString("order_code") %></td>
+                        <td><%= String.format("%,.0f", rs.getDouble("total_amount")) %> VNĐ</td>
+                        <td><%= rs.getTimestamp("order_date") %></td>
+                        <td><%= rs.getString("status") %></td>
+                    </tr>
+                    <%
+                            }
+                            
+                            if (rowCount == 0) {
+                                out.println("<tr><td colspan='6' class='text-center'>Không có đơn hàng nào trong cơ sở dữ liệu.</td></tr>");
+                            }
+                            
+                        } catch (Exception e) {
+                            out.println("<tr><td colspan='6' class='text-danger'>Lỗi khi truy vấn cơ sở dữ liệu: " + e.getMessage() + "</td></tr>");
+                            e.printStackTrace();
+                        } finally {
+                            try { if (rs != null) rs.close(); } catch (Exception e) {}
+                            try { if (ps != null) ps.close(); } catch (Exception e) {}
+                            try { if (conn != null) conn.close(); } catch (Exception e) {}
+                        }
+                    %>
+                </tbody>
+            </table>
+            <p><strong>Total records found:</strong> <%= rowCount %></p>
+        </div>
+        
+        <!-- Regular Order List -->
         <c:if test="${empty orders}">
             <div class="alert alert-info mt-3">
                 Bạn chưa có đơn hàng nào. <a href="home">Tiếp tục mua sắm</a>

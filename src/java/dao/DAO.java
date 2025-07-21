@@ -552,8 +552,33 @@ public class DAO {
     
     public List<Order> getOrdersByAccountId(int accountId) {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM Orders WHERE account_id = ? ORDER BY order_date DESC";
+        
         try {
+            System.out.println("====== CHECKING ALL ORDERS IN DATABASE ======");
+            // First, let's check ALL orders in the database
+            String checkAllQuery = "SELECT id, account_id, order_code, total_amount FROM Orders ORDER BY order_date DESC";
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(checkAllQuery);
+            rs = ps.executeQuery();
+            
+            boolean hasAnyOrders = false;
+            System.out.println("All orders in database:");
+            while (rs.next()) {
+                hasAnyOrders = true;
+                int id = rs.getInt("id");
+                int accId = rs.getInt("account_id");
+                String code = rs.getString("order_code");
+                double amount = rs.getDouble("total_amount");
+                System.out.println("  Order ID: " + id + ", Account ID: " + accId + ", Code: " + code + ", Amount: " + amount);
+            }
+            
+            if (!hasAnyOrders) {
+                System.out.println("  NO ORDERS FOUND IN DATABASE AT ALL!");
+            }
+            System.out.println("===========================================");
+            
+            // Now continue with the original query
+            String query = "SELECT * FROM Orders WHERE account_id = ? ORDER BY order_date DESC";
             System.out.println("DEBUG getOrdersByAccountId - Starting method with accountId: " + accountId);
             System.out.println("DEBUG getOrdersByAccountId - Query: " + query);
             
