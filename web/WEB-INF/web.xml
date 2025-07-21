@@ -48,23 +48,23 @@
         <url-pattern>/cart</url-pattern>
     </servlet-mapping>
     
-    <!-- Google Login Controller Configuration -->
+    <!-- Google Login Servlet Configuration -->
     <servlet>
-        <servlet-name>GoogleLoginControl</servlet-name>
-        <servlet-class>control.GoogleLoginControl</servlet-class>
+        <servlet-name>GoogleLoginServlet</servlet-name>
+        <servlet-class>control.GoogleLoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>GoogleLoginControl</servlet-name>
+        <servlet-name>GoogleLoginServlet</servlet-name>
         <url-pattern>/login-google</url-pattern>
     </servlet-mapping>
     
-    <!-- Google Callback Controller Configuration -->
+    <!-- Google Callback Servlet Configuration -->
     <servlet>
-        <servlet-name>GoogleCallbackControl</servlet-name>
-        <servlet-class>control.GoogleCallbackControl</servlet-class>
+        <servlet-name>GoogleCallbackServlet</servlet-name>
+        <servlet-class>control.GoogleCallbackServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>GoogleCallbackControl</servlet-name>
+        <servlet-name>GoogleCallbackServlet</servlet-name>
         <url-pattern>/google-callback</url-pattern>
     </servlet-mapping>
     
