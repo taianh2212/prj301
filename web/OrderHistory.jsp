@@ -23,6 +23,17 @@
             color: red;
             font-weight: bold;
         }
+        .debug-section {
+            background-color: #f8d7da;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+        }
+        .debug-title {
+            color: #721c24;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -30,6 +41,22 @@
     
     <div class="container mt-4">
         <h2>Lịch sử mua hàng</h2>
+        
+        <!-- Debug Section -->
+        <div class="debug-section">
+            <h4 class="debug-title">Debug Information</h4>
+            <p><strong>Account in session:</strong> ${sessionScope.acc != null ? 'Yes' : 'No'}</p>
+            <c:if test="${sessionScope.acc != null}">
+                <p><strong>Account ID:</strong> ${sessionScope.acc.id}</p>
+                <p><strong>Username:</strong> ${sessionScope.acc.user}</p>
+            </c:if>
+            <p><strong>Orders attribute exists:</strong> ${orders != null ? 'Yes' : 'No'}</p>
+            <p><strong>Orders empty:</strong> ${empty orders ? 'Yes' : 'No'}</p>
+            <c:if test="${orders != null && not empty orders}">
+                <p><strong>Number of orders:</strong> ${orders.size()}</p>
+                <p><strong>First order:</strong> ID=${orders[0].id}, Code=${orders[0].orderCode}</p>
+            </c:if>
+        </div>
         
         <c:if test="${empty orders}">
             <div class="alert alert-info mt-3">

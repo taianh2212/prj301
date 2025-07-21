@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 
 @WebServlet(name = "OrderHistoryControl", urlPatterns = {"/order-history"})
 public class OrderHistoryControl extends HttpServlet {
@@ -21,8 +22,23 @@ public class OrderHistoryControl extends HttpServlet {
         
         try {
             System.out.println("------- OrderHistoryControl START -------");
+            System.out.println("Request URL: " + request.getRequestURL().toString());
+            System.out.println("Request URI: " + request.getRequestURI());
+            System.out.println("Context Path: " + request.getContextPath());
+            
+            // Print all request parameters
+            System.out.println("Request parameters:");
+            Enumeration<String> paramNames = request.getParameterNames();
+            while (paramNames.hasMoreElements()) {
+                String paramName = paramNames.nextElement();
+                String paramValue = request.getParameter(paramName);
+                System.out.println("  " + paramName + "=" + paramValue);
+            }
+            
             // Get logged in user
             HttpSession session = request.getSession();
+            System.out.println("Session ID: " + session.getId());
+            
             Account account = (Account) session.getAttribute("acc");
             
             System.out.println("Session account: " + (account != null ? "found" : "null"));

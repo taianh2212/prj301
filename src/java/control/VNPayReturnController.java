@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import dao.DAO;
+import entity.Order;
 
 @WebServlet(name = "VNPayReturnController", urlPatterns = {"/vnpay-return"})
 public class VNPayReturnController extends HttpServlet {
@@ -104,6 +105,14 @@ public class VNPayReturnController extends HttpServlet {
                         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
                         Account account = (Account) session.getAttribute("acc");
                         
+                        // Debug info for payment success
+                        System.out.println("------ PAYMENT SUCCESS DEBUG ------");
+                        System.out.println("Cart in session: " + (cart != null ? "Yes, items: " + cart.size() : "No"));
+                        System.out.println("Account in session: " + (account != null ? "Yes" : "No"));
+                        if (account != null) {
+                            System.out.println("Account ID: " + account.getId() + ", Username: " + account.getUser());
+                        }
+                        
                         if (cart != null && !cart.isEmpty() && account != null) {
                             // Get transaction details
                             String vnp_Amount = request.getParameter("vnp_Amount");
@@ -111,14 +120,17 @@ public class VNPayReturnController extends HttpServlet {
                             if (vnp_Amount != null) {
                                 // VNPay amount is in VND * 100
                                 amount = Double.parseDouble(vnp_Amount) / 100;
+                                System.out.println("VNPay Amount: " + vnp_Amount + " => " + amount + " VND");
                             } else {
                                 // Calculate from cart if amount not provided
                                 for (CartItem item : cart) {
                                     amount += item.getTotal();
                                 }
+                                System.out.println("Cart Total Amount: " + amount + " VND");
                             }
                             
                             String vnp_TransactionNo = request.getParameter("vnp_TransactionNo");
+                            System.out.println("Transaction Code: " + vnp_TransactionNo);
                             
                             // Save order
                             DAO dao = new DAO();
@@ -129,14 +141,35 @@ public class VNPayReturnController extends HttpServlet {
                                 vnp_TransactionNo
                             );
                             
+                            System.out.println("Order created with ID: " + orderId);
+                            
                             if (orderId > 0) {
                                 // Save order items
                                 dao.saveOrderItems(orderId, cart);
+                                System.out.println("Order items saved for order ID: " + orderId);
+                                
+                                // Get the saved order to verify
+                                Order savedOrder = dao.getOrderById(orderId);
+                                if (savedOrder != null) {
+                                    System.out.println("Verified saved order: ID=" + savedOrder.getId() 
+                                        + ", AccountID=" + savedOrder.getAccountId()
+                                        + ", Items=" + savedOrder.getOrderItems().size());
+                                } else {
+                                    System.out.println("WARNING: Could not verify saved order with ID: " + orderId);
+                                }
                                 
                                 // Store order ID in request for display
                                 request.setAttribute("orderId", orderId);
+                                System.out.println("Order ID set as request attribute: " + orderId);
+                            } else {
+                                System.out.println("ERROR: Failed to create order! Returned ID: " + orderId);
                             }
+                        } else {
+                            System.out.println("WARNING: Cannot save order - " 
+                                + (cart == null ? "cart is null" : cart.isEmpty() ? "cart is empty" : "") 
+                                + (account == null ? ", account is null" : ""));
                         }
+                        System.out.println("--------------------------------");
                         
                         // Clear cart
                         session.removeAttribute("cart");

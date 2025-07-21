@@ -518,9 +518,12 @@ public class DAO {
         String query = "INSERT INTO OrderItems (order_id, product_id, product_name, price, quantity) " +
                       "VALUES (?, ?, ?, ?, ?)";
         try {
+            System.out.println("DEBUG saveOrderItems - Starting for orderId: " + orderId + ", items: " + cartItems.size());
+            
             conn = new DBContext().getConnection();
             ps = conn.prepareStatement(query);
             
+            int count = 0;
             for (CartItem item : cartItems) {
                 ps.setInt(1, orderId);
                 ps.setInt(2, item.getProduct().getId());
@@ -528,10 +531,21 @@ public class DAO {
                 ps.setDouble(4, item.getProduct().getPrice());
                 ps.setInt(5, item.getQuantity());
                 ps.addBatch();
+                
+                System.out.println("DEBUG saveOrderItems - Added item to batch: ProductID=" 
+                    + item.getProduct().getId() 
+                    + ", Name=" + item.getProduct().getName() 
+                    + ", Qty=" + item.getQuantity()
+                    + ", Price=" + item.getProduct().getPrice());
+                count++;
             }
             
-            ps.executeBatch();
+            System.out.println("DEBUG saveOrderItems - Executing batch for " + count + " items");
+            int[] results = ps.executeBatch();
+            System.out.println("DEBUG saveOrderItems - Batch execution complete, results length: " + results.length);
+            
         } catch (Exception e) {
+            System.out.println("ERROR in saveOrderItems: " + e.getMessage());
             e.printStackTrace();
         }
     }
