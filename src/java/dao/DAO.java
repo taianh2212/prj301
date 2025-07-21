@@ -477,8 +477,7 @@ public class DAO {
     
     // Order-related methods
     
-    public int createOrder(int accountId, double totalAmount, String paymentMethod, 
-                          String transactionCode) {
+    public int createOrder(int accountId, double totalAmount, String paymentMethod, String transactionCode) {
         int orderId = -1;
         String orderCode = generateOrderCode();
         String query = "INSERT INTO Orders (account_id, order_code, total_amount, order_date, " +
@@ -486,6 +485,11 @@ public class DAO {
                       "VALUES (?, ?, ?, GETDATE(), ?, ?, 'Completed'); " +
                       "SELECT SCOPE_IDENTITY() AS order_id;";
         try {
+            System.out.println("DEBUG createOrder - Starting with accountId: " + accountId 
+                    + ", amount: " + totalAmount 
+                    + ", orderCode: " + orderCode);
+            System.out.println("DEBUG createOrder - Query: " + query);
+            
             conn = new DBContext().getConnection();
             ps = conn.prepareStatement(query);
             ps.setInt(1, accountId);
@@ -494,11 +498,17 @@ public class DAO {
             ps.setString(4, paymentMethod);
             ps.setString(5, transactionCode);
             
+            System.out.println("DEBUG createOrder - Executing query...");
             rs = ps.executeQuery();
+            
             if (rs.next()) {
                 orderId = rs.getInt("order_id");
+                System.out.println("DEBUG createOrder - Order created with ID: " + orderId);
+            } else {
+                System.out.println("DEBUG createOrder - No order ID returned from query");
             }
         } catch (Exception e) {
+            System.out.println("ERROR in createOrder: " + e.getMessage());
             e.printStackTrace();
         }
         return orderId;
@@ -530,17 +540,35 @@ public class DAO {
         List<Order> orders = new ArrayList<>();
         String query = "SELECT * FROM Orders WHERE account_id = ? ORDER BY order_date DESC";
         try {
+            System.out.println("DEBUG getOrdersByAccountId - Starting method with accountId: " + accountId);
+            System.out.println("DEBUG getOrdersByAccountId - Query: " + query);
+            
             conn = new DBContext().getConnection();
             ps = conn.prepareStatement(query);
             ps.setInt(1, accountId);
+            
+            System.out.println("DEBUG getOrdersByAccountId - Executing query...");
             rs = ps.executeQuery();
             
+            System.out.println("DEBUG getOrdersByAccountId - Query executed, processing results...");
+            int count = 0;
             while (rs.next()) {
+                count++;
+                int id = rs.getInt("id");
+                int dbAccountId = rs.getInt("account_id");
+                String orderCode = rs.getString("order_code");
+                double amount = rs.getDouble("total_amount");
+                
+                System.out.println("DEBUG getOrdersByAccountId - Found order: ID=" + id 
+                    + ", AccID=" + dbAccountId 
+                    + ", Code=" + orderCode 
+                    + ", Amount=" + amount);
+                
                 Order order = new Order(
-                    rs.getInt("id"),
-                    rs.getInt("account_id"),
-                    rs.getString("order_code"),
-                    rs.getDouble("total_amount"),
+                    id,
+                    dbAccountId,
+                    orderCode,
+                    amount,
                     rs.getTimestamp("order_date"),
                     rs.getString("payment_method"),
                     rs.getString("transaction_code"),
@@ -548,10 +576,15 @@ public class DAO {
                 );
                 
                 // Load order items
-                order.setOrderItems(getOrderItemsByOrderId(order.getId()));
+                List<OrderItem> items = getOrderItemsByOrderId(order.getId());
+                System.out.println("DEBUG getOrdersByAccountId - Found " + items.size() + " items for order " + id);
+                order.setOrderItems(items);
                 orders.add(order);
             }
+            
+            System.out.println("DEBUG getOrdersByAccountId - Total orders found: " + count);
         } catch (Exception e) {
+            System.out.println("ERROR in getOrdersByAccountId: " + e.getMessage());
             e.printStackTrace();
         }
         return orders;
