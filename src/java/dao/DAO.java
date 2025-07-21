@@ -325,6 +325,92 @@ public class DAO {
         }
     }
 
+    public List<Account> getAllAccounts() {
+        List<Account> list = new ArrayList<>();
+        String query = "select * from account";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getInt(5)));
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+    
+    public void deleteAccount(String id) {
+        String query = "delete from account\n"
+                + "where [id] = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+    
+    public void updateAccount(String id, String username, String password, String isSell, String isAdmin) {
+        String query = "update account\n"
+                + "set [user] = ?,\n"
+                + "[pass] = ?,\n"
+                + "isSell = ?,\n"
+                + "isAdmin = ?\n"
+                + "where [id] = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.setString(3, isSell);
+            ps.setString(4, isAdmin);
+            ps.setString(5, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+    
+    public Account getAccountByID(String id) {
+        String query = "select * from account\n"
+                + "where id = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getInt(5));
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+    
+    public void insertAccount(String username, String password, String isSell, String isAdmin) {
+        String query = "insert into account\n"
+                + "values(?, ?, ?, ?)";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.setString(3, isSell);
+            ps.setString(4, isAdmin);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
     public static void main(String[] args) {
         DAO dao = new DAO();
         List<Product> list = dao.getAllProduct();
@@ -334,5 +420,4 @@ public class DAO {
             System.out.println(o);
         }
     }
-
 }
