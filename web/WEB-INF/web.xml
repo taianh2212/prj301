@@ -9,6 +9,17 @@
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/users</url-pattern>
     </servlet-mapping>
+    
+    <!-- VNPay Return Controller Configuration -->
+    <servlet>
+        <servlet-name>VNPayReturnController</servlet-name>
+        <servlet-class>control.VNPayReturnController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VNPayReturnController</servlet-name>
+        <url-pattern>/vnpay-return</url-pattern>
+    </servlet-mapping>
+    
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
