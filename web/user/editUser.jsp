@@ -1,89 +1,85 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>User Management • Edit User</title>
-
-    <style>
-        /* ----- RESET ----- */
-        *{box-sizing:border-box;font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-        body{margin:0;background:#f4f6f9;color:#333;display:flex;flex-direction:column;min-height:100vh}
-
-        /* ----- HEADER ----- */
-        header{background:#4f46e5;color:#fff;padding:24px 0;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-        header h1{margin:0;font-size:28px;font-weight:600}
-        header a{color:#ffd;opacity:.9;text-decoration:none;font-size:15px}
-        header a:hover{opacity:1;text-decoration:underline}
-
-        /* ----- CARD ----- */
-        .card{width:380px;background:#fff;margin:48px auto;padding:32px 40px;border-radius:12px;
-              box-shadow:0 4px 12px rgba(0,0,0,.1)}
-        .card h2{margin:0 0 24px;text-align:center;font-size:22px;color:#4f46e5}
-
-        /* ----- INPUT + LABEL ----- */
-        label{display:block;font-weight:500;margin-top:14px;margin-bottom:6px}
-        input[type=text],input[type=email],input[type=password],input[type=date],select{
-            width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;font-size:14px}
-        input:focus,select:focus{border-color:#4f46e5;outline:0;box-shadow:0 0 0 2px rgba(79,70,229,.15)}
-
-        /* ----- CHECKBOX ----- */
-        .chk{display:flex;align-items:center;margin-top:14px}
-        .chk input{margin-right:8px;transform:scale(1.1)}
-
-        /* ----- SUBMIT BUTTON ----- */
-        .btn{width:100%;margin-top:26px;padding:12px;border:none;border-radius:6px;
-             background:#4f46e5;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
-        .btn:hover{background:#4338ca}
-
-        footer{margin-top:auto;padding:12px;text-align:center;font-size:13px;color:#777}
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>User Management</h1>
-    <a href="${pageContext.request.contextPath}/users">← Back to List</a>
-</header>
-
-<section class="card">
-    <h2>Edit User</h2>
-
-    <form action="${pageContext.request.contextPath}/users?action=edit" method="post">
-        <input type="hidden" name="id" value="${user.id}"/>
-
-        <label>Username</label>
-        <input type="text" name="username" value="${user.username}" required/>
-
-        <label>Email</label>
-        <input type="email" name="email" value="${user.email}" required/>
-
-        <label>Country</label>
-        <input type="text" name="country" value="${user.country}" />
-
-        <label>Role</label>
-        <select name="role">
-            <option value="user"  <c:if test="${user.role eq 'user'}">selected</c:if>>User</option>
-            <option value="admin" <c:if test="${user.role eq 'admin'}">selected</c:if>>Admin</option>
-        </select>
-
-        <label>Password</label>
-        <input type="password" name="password" value="${user.password}" required/>
-
-        <label>Date of Birth</label>
-        <input type="date" name="dob" value="${user.dob}" />
-
-        <div class="chk">
-            <input type="checkbox" name="status" <c:if test="${user.status}">checked</c:if> >
-            <span>Status (Active)</span>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Edit User</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .form-container {
+                background: white;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                margin-top: 20px;
+            }
+            .header {
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <jsp:include page="../Menu.jsp"></jsp:include>
+        
+        <div class="container mt-4">
+            <div class="row header">
+                <div class="col">
+                    <h2>Edit User</h2>
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <c:if test="${not empty errorMessage}">
+                    <div class="alert alert-danger" role="alert">
+                        ${errorMessage}
+                    </div>
+                </c:if>
+                
+                <form action="user?action=update" method="post">
+                    <input type="hidden" name="id" value="${user.id}">
+                    
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" value="${user.user}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" value="${user.pass}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>User Roles:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isSell" name="isSell" value="1" ${user.isSell == 1 ? "checked" : ""}>
+                            <label class="form-check-label" for="isSell">Seller</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isAdmin" name="isAdmin" value="1" ${user.isAdmin == 1 ? "checked" : ""}>
+                            <label class="form-check-label" for="isAdmin">Administrator</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update User
+                        </button>
+                        <a href="user" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <button class="btn" type="submit">Save Changes</button>
-    </form>
-</section>
-
-<footer>© 2025 Demo Project</footer>
-</body>
+        
+        <jsp:include page="../Footer.jsp"></jsp:include>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    </body>
 </html>

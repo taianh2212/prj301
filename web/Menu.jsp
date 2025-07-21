@@ -18,6 +18,12 @@
                         <a class="nav-link" href="user-management"><i class="fa fa-users"></i> User Management</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="user"><i class="fa fa-user"></i> Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="manager"><i class="fa fa-box"></i> Products</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="admin-manager"><i class="fa fa-cogs"></i> Complete Manager</a>
                     </li>
                 </c:if>
