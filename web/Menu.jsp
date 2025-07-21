@@ -17,6 +17,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="user-management"><i class="fa fa-users"></i> User Management</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-manager"><i class="fa fa-cogs"></i> Complete Manager</a>
+                    </li>
                 </c:if>
                 <c:if test="${sessionScope.acc.isSell == 1}">
                     <li class="nav-item">
