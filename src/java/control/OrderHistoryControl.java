@@ -20,15 +20,21 @@ public class OrderHistoryControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
+            System.out.println("------- OrderHistoryControl START -------");
             // Get logged in user
             HttpSession session = request.getSession();
             Account account = (Account) session.getAttribute("acc");
             
+            System.out.println("Session account: " + (account != null ? "found" : "null"));
+            
             if (account == null) {
                 // Redirect to login if not logged in
+                System.out.println("Not logged in, redirecting to login page");
                 response.sendRedirect("Login.jsp");
                 return;
             }
+            
+            System.out.println("Account ID: " + account.getId());
             
             // Check if we need order details
             String action = request.getParameter("action");
@@ -40,14 +46,19 @@ public class OrderHistoryControl extends HttpServlet {
                         DAO dao = new DAO();
                         Order order = dao.getOrderById(orderId);
                         
+                        System.out.println("Viewing order details for order ID: " + orderId + ", found: " + (order != null));
+                        
                         // Verify the order belongs to this user
                         if (order != null && order.getAccountId() == account.getId()) {
                             request.setAttribute("order", order);
                             request.getRequestDispatcher("OrderDetail.jsp").forward(request, response);
                             return;
+                        } else {
+                            System.out.println("Order not found or doesn't belong to user");
                         }
                     } catch (NumberFormatException e) {
                         // Invalid order ID, continue to show order list
+                        System.out.println("Invalid order ID: " + orderIdStr);
                     }
                 }
             }
@@ -56,10 +67,17 @@ public class OrderHistoryControl extends HttpServlet {
             DAO dao = new DAO();
             List<Order> orders = dao.getOrdersByAccountId(account.getId());
             
+            System.out.println("Found " + (orders != null ? orders.size() : 0) + " orders for account ID: " + account.getId());
+            if (orders != null && !orders.isEmpty()) {
+                System.out.println("First order: ID=" + orders.get(0).getId() + ", Code=" + orders.get(0).getOrderCode());
+            }
+            
             request.setAttribute("orders", orders);
             request.getRequestDispatcher("OrderHistory.jsp").forward(request, response);
+            System.out.println("------- OrderHistoryControl END -------");
             
         } catch (Exception e) {
+            System.out.println("ERROR in OrderHistoryControl: " + e.getMessage());
             e.printStackTrace();
             response.sendRedirect("home");
         }
