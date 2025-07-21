@@ -120,6 +120,11 @@ public class VNPayConfig {
     
     // Helper method to get return URL dynamically
     public static String getReturnUrl(HttpServletRequest request) {
+        // For demo and development, just use a simple URL
+        return "http://localhost:8080/vnpay-return";
+        
+        // Production code would use this more complex approach:
+        /*
         String serverName = request.getServerName();
         int serverPort = request.getServerPort();
         String contextPath = request.getContextPath();
@@ -142,5 +147,6 @@ public class VNPayConfig {
         url.append("vnpay-return");
         
         return url.toString();
+        */
     }
 } 

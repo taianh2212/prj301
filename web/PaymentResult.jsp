@@ -38,6 +38,22 @@
                 margin-top: 15px;
                 font-size: 18px;
             }
+            .debug-info {
+                font-family: monospace;
+                font-size: 12px;
+                background: #333;
+                color: #fff;
+                padding: 15px;
+                border-radius: 5px;
+                white-space: pre-wrap;
+                margin-top: 30px;
+                max-height: 200px;
+                overflow: auto;
+            }
+            .debug-toggle {
+                margin-top: 10px;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
@@ -65,31 +81,37 @@
                         </c:otherwise>
                     </c:choose>
                     
-                    <c:if test="${not empty transactionNo}">
+                    <c:if test="${not empty transactionNo || not empty amount}">
                         <div class="transaction-details">
                             <h4>Chi tiết giao dịch</h4>
                             <table class="table table-striped">
-                                <tr>
-                                    <th>Mã giao dịch:</th>
-                                    <td>${transactionNo}</td>
-                                </tr>
-                                <tr>
-                                    <th>Số tiền:</th>
-                                    <td>
-                                        <c:if test="${not empty amount}">
+                                <c:if test="${not empty transactionNo}">
+                                    <tr>
+                                        <th>Mã giao dịch:</th>
+                                        <td>${transactionNo}</td>
+                                    </tr>
+                                </c:if>
+                                <c:if test="${not empty amount}">
+                                    <tr>
+                                        <th>Số tiền:</th>
+                                        <td>
                                             <c:set var="formattedAmount" value="${Integer.parseInt(amount)/100}" />
-                                            <fmt:formatNumber type="number" pattern="#,###" value="${formattedAmount}" /> VND
-                                        </c:if>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Ngày thanh toán:</th>
-                                    <td>${payDate}</td>
-                                </tr>
-                                <tr>
-                                    <th>Thông tin đơn hàng:</th>
-                                    <td>${orderInfo}</td>
-                                </tr>
+                                            ${formattedAmount} VND
+                                        </td>
+                                    </tr>
+                                </c:if>
+                                <c:if test="${not empty payDate}">
+                                    <tr>
+                                        <th>Ngày thanh toán:</th>
+                                        <td>${payDate}</td>
+                                    </tr>
+                                </c:if>
+                                <c:if test="${not empty orderInfo}">
+                                    <tr>
+                                        <th>Thông tin đơn hàng:</th>
+                                        <td>${orderInfo}</td>
+                                    </tr>
+                                </c:if>
                                 <c:if test="${not empty bankCode}">
                                     <tr>
                                         <th>Ngân hàng:</th>
@@ -117,6 +139,20 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
+                    
+                    <div class="debug-toggle mt-5">
+                        <button class="btn btn-sm btn-secondary" onclick="toggleDebug()">
+                            <i class="fas fa-bug"></i> Hiển thị thông tin gỡ lỗi
+                        </button>
+                    </div>
+                    
+                    <div id="debugInfo" class="debug-info mt-3" style="display: none;">
+                        <strong>Debug Information:</strong>
+                        <br/>
+                        <c:forEach items="${pageContext.request.parameterMap}" var="parameter">
+                            ${parameter.key}: ${parameter.value[0]}<br/>
+                        </c:forEach>
+                    </div>
                 </div>
             </div>
         </div>
@@ -125,5 +161,15 @@
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script>
+            function toggleDebug() {
+                var debugInfo = document.getElementById('debugInfo');
+                if (debugInfo.style.display === 'none') {
+                    debugInfo.style.display = 'block';
+                } else {
+                    debugInfo.style.display = 'none';
+                }
+            }
+        </script>
     </body>
 </html> 
